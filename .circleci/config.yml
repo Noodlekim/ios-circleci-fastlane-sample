@@ -1,0 +1,46 @@
+version: 2.1
+
+commands:
+  setup_env:
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-gems-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: Bundle Install
+          command: bundle install
+      - save_cache:
+          key: v1-gems-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+# 2. 실제 수행할 작업(Jobs)
+jobs:
+  run_unit_tests:
+    macos:
+      xcode: "26.2" 
+    environment:
+      # TCA マクロ検証スキップ設計
+      SWIFT_DETERMINISTIC_MACRO_FINGERPRINTS: "1"
+    steps:
+      - setup_env
+      - run:
+          name: Run Unit Tests via Fastlane
+          # -skipMacroValidation 옵션을 포함한 fastlane 실행
+          command: bundle exec fastlane test
+      - store_test_results:
+          path: test_output/report.xml
+
+# 3. 작업 흐름(Workflows)
+workflows:
+  version: 2
+  unit_test_flow:
+    jobs:
+      - run_unit_tests:
+          filters:
+            branches:
+              only: 
+                - main
+                - develop
+                - /feature\/.*/
