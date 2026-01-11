@@ -37,6 +37,7 @@ struct TCA_SampleTests {
                                     reducer: { UserSearchFeature() })
         var testUseCase = GitHubTestUseCase()
         // 期待値設定
+        let error = GitHubAPIError.urlError
         let mockUsers = [UserEntity.mock]
         testUseCase.userResults = .success(mockUsers)
         store.dependencies.gitHubUseCase = testUseCase

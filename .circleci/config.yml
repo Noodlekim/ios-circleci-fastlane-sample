@@ -15,24 +15,25 @@ commands:
           paths:
             - vendor/bundle
 
-# 2. 실제 수행할 작업(Jobs)
+# Jobs
 jobs:
   run_unit_tests:
     macos:
       xcode: "26.2" 
     environment:
+      # SPMパッケージ
+      - RESOLVE_PACKAGE_WITH_FIXED_REVISIONS: "1"
       # TCA マクロ検証スキップ設計
-      SWIFT_DETERMINISTIC_MACRO_FINGERPRINTS: "1"
+      - SWIFT_DETERMINISTIC_MACRO_FINGERPRINTS: "1"
     steps:
       - setup_env
       - run:
           name: Run Unit Tests via Fastlane
-          # -skipMacroValidation 옵션을 포함한 fastlane 실행
           command: bundle exec fastlane test
       - store_test_results:
           path: test_output/report.xml
 
-# 3. 작업 흐름(Workflows)
+# Workflows
 workflows:
   version: 2
   unit_test_flow:
