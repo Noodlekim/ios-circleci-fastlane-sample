@@ -38,8 +38,7 @@ struct TCA_SampleTests {
         var testUseCase = GitHubTestUseCase()
         // 期待値設定
         let error = GitHubAPIError.urlError
-        let mockUsers = [UserEntity.mock]
-        testUseCase.userResults = .success(mockUsers)
+        testUseCase.userResults = .failure(error)
         store.dependencies.gitHubUseCase = testUseCase
 
         // テスト開始
